@@ -7,6 +7,7 @@ import Product from './Pages/Product';
 import Cart from './Pages/Cart';
 import Register from './Pages/RegisterPage';
 import Login from './Pages/Login';
+import DummyPayment from './Pages/PaymentGatewayDummy';
 import { UserProvider } from './Context/user.context';
 import { useContext, useEffect, useState } from "react";
 function App() {
@@ -29,6 +30,7 @@ function App() {
     <Route path='/cart' element = {<Cart/>}/>
     <Route path='/register' element = {<Register/>}/>
     <Route path='/login' element = {<Login/>}/>
+    <Route path='/pay' element = {<DummyPayment/>}/>
     </Routes>
 
     </BrowserRouter>

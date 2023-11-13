@@ -4,9 +4,11 @@ import remove_icon from '../Assets/cart_cross_icon.png'
 import all_product from '../Assets/all_product'
 import axios from 'axios'
 import { UserContext } from '../../Context/user.context'
+import { Navigate, useNavigate } from 'react-router-dom'
 const CartItems = () => {
   const { user, fetchUser, } = useContext(UserContext);
 
+  const navigate = useNavigate()
   
     const [products, getProd] = useState([])
   const [total, setTotal] = useState(0)
@@ -41,6 +43,14 @@ const CartItems = () => {
      }
   }
 
+  async function checkout() {
+    console.log("tgb")
+    var a = products[0]
+
+      navigate('/pay/ ', {state: {props: a}})
+      // navigate(`/pay/ ${productID}`, {state: {product: props}})
+
+  }
   useEffect(() => {
     getItems(); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -91,7 +101,7 @@ const CartItems = () => {
                     <h3> {total} KD</h3>
                 </div>
             </div>
-            <button>PROCEED TO CHECKOUT</button>
+            <button onClick={checkout}>PROCEED TO CHECKOUT</button>
         </div>
         
       </div>

@@ -16,7 +16,7 @@ const orders=new mongoose.Schema( {
      
        
    
-    cartItems: [{ type: mongoose.Schema.Types.ObjectId, ref: 'products', required: false}]
+    cartItems: []
     })
     const ordersCollection = mongoose.model ( "orders", orders )
 

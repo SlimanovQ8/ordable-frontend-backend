@@ -21,7 +21,7 @@ var con = mongoose.connection;
 var userCollection = con.collection("users")
 app.get("/getproducts", cors(), async (req, res) => {
 
-    await productCollection.find({isPopular: true})
+    await productCollection.find()
     .then(products => (res.json(products)));
 })
 
@@ -40,6 +40,14 @@ app.get("/getpouplarproducts", cors(), async (req, res) => {
 
     await productCollection.find({isPopular: true}).limit(4)
     .then(products => (res.json(products)));
+})
+
+app.get("/getorders", cors(), async (req, res) => {
+
+    console.log("fv")
+
+    await ordersCollection.find()
+    .then(orders => (res.json(orders)));
 })
 app.get("/prod/:id", cors(), async (req, res) => {
     let category = req.params.id
@@ -141,6 +149,49 @@ app.post("/signup", async(req, res) => {
 })
 
 
+app.post("/placeorder/", async(req, res) => {
+  
+    
+    const{name, userID, } = req.body
+
+    
+    console.log(req.body)
+    console.log(userID)
+    
+   
+
+    try{
+
+
+        const currentUser = await userCollection.findOne({_id: userID});
+        var getItems = currentUser.cartItems
+       
+       
+        console.log(getItems)
+
+        const updateDoc = {
+            $set: { 
+              cartItems: []
+          }
+        }
+            await userCollection.updateOne({_id:userID}, updateDoc)
+            if(getItems.size > 0)
+            {
+                await ordersCollection.insertMany({
+                    from: userID,
+                    cartItems: getItems,
+                    status: false,
+                    
+                })
+            }
+        
+    }
+    catch(e){
+        res.json(e)
+        console.log(e)
+    }
+})
+
 app.post("/addtocart/:id", async(req, res) => {
   
     
@@ -205,69 +256,7 @@ app.post("/addtocart/:id", async(req, res) => {
     }
 })
 
-app.post("/placeorder/:id", async(req, res) => {
-  
-    
-    const{name, userID, } = req.body
 
-    
-    console.log(req.body)
-    console.log(userID)
-    let x = req.params.id;
-    console.log(req.params.id)
-    const product = await productCollection.findOne({_id: new ObjectId(x)})
-    console.log(product)
-
-    const data = {
-        "name": name,
-    } 
-
-    try{
-
-
-        const currentUser = await userCollection.findOne({_id: userID});
-        var getItems = currentUser.cartItems
-        var currentItem = getItems[product.name]
-        const productName = product.name
-        
-        var obj = null;    
-        var index = 0;
-        for (var i = 0; i < getItems.length; i++) {
-            if (getItems[i].name == productName) {
-                obj = getItems[i];
-                index = i;
-                break;
-            }
-        }
-        if(obj != null)
-        {
-            getItems[index].quantity++;
-        }
-        else {
-           var newItem = {
-                image: product.image,
-                price: product.price,
-                name: productName,
-                quantity: 1
-            }
-            getItems.push(newItem)
-        }
-        console.log(getItems)
-        const updateDoc = {
-            $set: { 
-              cartItems: getItems
-          }
-        }
-            await ordersCollection.insertOne(updateDoc)
-
-        
-    }
-    catch(e){
-        res.json(e)
-        console.log(e)
-        console.log(data)
-    }
-})
 app.listen(8000, () => {
     console.log("port conne")
 })

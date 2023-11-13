@@ -50,7 +50,7 @@ const ProductDisplay = (props) => {
       catch(e){
           console.log(e)
       }
-      await             getTotalCartItems("6550f46209c10076243ce705")
+      await             getTotalCartItems(userID)
 
     }
   return (
